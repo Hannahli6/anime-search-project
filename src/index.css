@@ -1,13 +1,73 @@
-body {
+.App {
+  display: flex;
+  justify-content: center;
+  background-color: rgb(255, 255, 255);
+  font-family: Tahoma, sans-serif;
+}
+.animeSearch {
+  background-color: #f1f1f1;
+  max-width: 1200px;
+  padding: 80px;
+}
+.search-container {
+  margin: 50px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.search-input {
+  /* background-color: transparent; */
+  border-radius: 25px;
+  border-width: 2px;
+  border-color: rgb(126, 126, 126);
+  outline: none;
+  width: 200px;
+  height: 30px;
+  padding: 10px 50px 10px 20px;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+}
+.search-container .btn {
+  background-color: transparent;
+  outline: none;
+  border: none;
+  cursor: pointer;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.animeList {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
 }
+.anime {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 180px;
+  margin: 10px 10px 60px 10px;
+  padding: 10px 10px 10px 10px;
+  background-color: white;
+  text-align: center;
+}
+.animeImage {
+  object-fit: cover;
+  width: 80%;
+  height: 80%;
+  margin: 5px;
+}
+.animeDesc {
+  width: 80%;
+}
+.animeDesc p {
+  margin-top: 5px;
+  padding-top: 5px;
+}
+.title {
+  display: block; /* or inline-block */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-height: 3.6em;
+  line-height: 1.8em;
+}
+/* ----------------------------------------------------------------------- */
