@@ -1,11 +1,54 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+a {
+  font-size: 14px;
+}
 .App {
-  display: flex;
-  justify-content: center;
   background-color: rgb(255, 255, 255);
   font-family: Tahoma, sans-serif;
 }
+/* landing page */
+.landing-container {
+  display: flex;
+  flex-direction: column;
+}
+/* sticky navbar */
+.navbar {
+  display: flex;
+  background-color: rgb(255, 255, 255);
+  padding: 25px 0;
+}
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+.nav-links {
+  margin-left: 15%;
+}
+.nav-link {
+  padding: 10px 50px;
+}
+.landing-banner {
+  background-image: url(https://i.pinimg.com/originals/27/6c/85/276c851e879565b746fc0421fb689590.jpg);
+  height: 500px;
+  display: flex;
+  align-items: center;
+}
+.landing-text-container {
+  margin-left: 13%;
+  color: white;
+}
+.landing-text-container h1 {
+  font-size: 70px;
+  margin-bottom: 0;
+}
+/* ----------------------------------- */
 .animeSearch {
-  background-color: #f1f1f1;
+  /* background-color: #8f95a7; */
+  margin: auto;
   max-width: 1200px;
   padding: 80px;
 }
@@ -40,34 +83,47 @@
   justify-content: center;
 }
 .anime {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 5px;
   width: 180px;
-  margin: 10px 10px 60px 10px;
-  padding: 10px 10px 10px 10px;
+  height: 280px;
+  margin-bottom: 80px;
   background-color: white;
   text-align: center;
 }
 .animeImage {
   object-fit: cover;
-  width: 80%;
-  height: 80%;
+  width: 100%;
+  height: 90%;
   margin: 5px;
 }
-.animeDesc {
-  width: 80%;
-}
-.animeDesc p {
-  margin-top: 5px;
-  padding-top: 5px;
-}
-.title {
-  display: block; /* or inline-block */
+.anime-title {
+  display: block;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  max-height: 3.6em;
-  line-height: 1.8em;
+  margin: 0;
+  font-size: 14px;
+  color: #f5f5f5;
+  text-shadow: rgb(0 0 0 / 80%) 1px 1px 0;
+  padding: 0 10px;
+}
+.anime-title-background{
+    bottom: 23px;
+    width: 100%;
+    position: absolute;
+    text-align: center;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    background: linear-gradient(
+      0deg
+      ,rgba(0,0,0,.6) 50%,transparent);
+      padding: 4px 0;
 }
 /* ----------------------------------------------------------------------- */

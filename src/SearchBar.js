@@ -14,7 +14,7 @@ const SearchBar = ({ handleOnSearch, searchValue, handleOnChange }) => {
           className="search search-input"
           onChange={handleOnChange}
           placeholder="Search Anime"
-        ></input>
+         ></input>
         <button
           className="search btn"
           type="submit"
