@@ -5,10 +5,12 @@ function App() {
   // const url = "https://api.jikan.moe/v3https://api.jikan.moe/v3"
   const [animeName, setAnimeName] = useState("Fate/Zero");
   const [animes, setAnimes] = useState([]);
-  const [numOfAnimeToDisplay, setNumOfAnimeToDisplay] = useState(20);
+  const [numOfAnimeToDisplay, setNumOfAnimeToDisplay] = useState(2);
+  const [pageNum, setPageNum] = useState(1);
   const url = `https://api.jikan.moe/v3/search/anime?q="${animeName}&page=1`;
   const [searchValue, setSearchValue] = useState("");
-
+  let next = "next";
+  let previous = "previous";
   useEffect(() => {
     async function fetchData() {
       try {
@@ -36,18 +38,35 @@ function App() {
     setSearchValue(event.target.value);
   };
 
+  const handleOnPageNumClick = (page) => {
+    console.log(page)
+    if(page === "next"){
+      setPageNum(pageNum + 1);
+      console.log(pageNum);
+    }
+    else if(page === "previous"){
+      setPageNum(pageNum - 1);
+      console.log(pageNum);
+    }
+  };
+
   return (
     <div className="App">
       <div className="landing-container">
-        <div className="navbar sticky">
+        <div className="navbar">
           <div className="nav-links">
-            <a className="nav-link">Home</a>
-            <a className="nav-link">Anime</a>
-            <a className="nav-link">Manga</a>
+            <a className="nav-link" href="https://www.google.ca/">
+              Home
+            </a>
+            <a className="nav-link" href="https://www.google.ca/">
+              Anime
+            </a>
+            <a className="nav-link" href="https://www.google.ca/">
+              Manga
+            </a>
           </div>
         </div>
         <div className="landing-banner">
-          <img className="landing-bg" alt="landing-bg"></img>
           <div className="landing-text-container">
             <h1>AniManga</h1>
             <h4>Find your favorite Anime & Manga now!</h4>
@@ -63,21 +82,28 @@ function App() {
         <div className="animeList">
           {animes !== undefined && animes.length > 0 ? (
             animes
-              .filter((element, index) => index < numOfAnimeToDisplay)
-              .map((anime, index) => {
-                const { score, image_url, title } = anime;
-                return (
-                  <div className="anime" key={index}>
-                    <img src={image_url} className="animeImage"></img>
-                    <div className="anime-title-background">
-                      <p className="anime-title">{title}</p>
-                    </div>
+            /* .slice(staring index, index+1) */
+            .slice(numOfAnimeToDisplay*(pageNum-1), numOfAnimeToDisplay*pageNum)
+            .map((anime, index) => {
+              const { image_url, title } = anime;
+              return (
+                <div className="anime" key={index}>
+                  <img src={image_url} className="animeImage" alt="anime"></img>
+                  <div className="anime-title-background">
+                    <p className="anime-title">{title}</p>
                   </div>
-                );
-              })
+                </div>
+              );
+            })
           ) : (
             <div>No Search Results for"{searchValue}"</div>
           )}
+        </div>
+        <div className="page-number-container">
+          <button className="page-number-btn" onClick={()=>handleOnPageNumClick(next)}>
+            next
+          </button>
+          <button className="page-number-btn" onClick={()=>handleOnPageNumClick(previous)}>previous</button>
         </div>
       </div>
     </div>

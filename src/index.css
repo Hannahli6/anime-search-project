@@ -19,12 +19,13 @@ a {
   display: flex;
   background-color: rgb(255, 255, 255);
   padding: 25px 0;
-}
-.sticky {
   position: fixed;
   top: 0;
   width: 100%;
+  z-index: 10;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
 }
+
 .nav-links {
   margin-left: 15%;
 }
@@ -47,30 +48,38 @@ a {
 }
 /* ----------------------------------- */
 .animeSearch {
-  /* background-color: #8f95a7; */
   margin: auto;
   max-width: 1200px;
   padding: 80px;
 }
+.search-bar{
+  position: relative;
+}
 .search-container {
-  margin: 50px;
+  margin: 20px;
+  margin-right:35px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
 }
 .search-input {
-  /* background-color: transparent; */
-  border-radius: 25px;
+  border-radius: 8px;
   border-width: 2px;
   border-color: rgb(126, 126, 126);
   outline: none;
   width: 200px;
-  height: 30px;
+  height: 20px;
   padding: 10px 50px 10px 20px;
   margin: 0;
 }
-.search-container .btn {
-  background-color: transparent;
+.search-btn{
+  position: absolute;
+  bottom: 50%;
+  right: 20px;
+  width: 10%;
+  background-color: rgb(219, 214, 214);
+  border-radius: 20px;
+  padding: 5px;
   outline: none;
   border: none;
   cursor: pointer;

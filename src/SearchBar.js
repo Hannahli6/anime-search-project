@@ -5,18 +5,18 @@ const SearchBar = ({ handleOnSearch, searchValue, handleOnChange }) => {
   return (
     <div className="search-container">
       <form
-        id="search-bar"
+        className="search-bar"
         onSubmit={(event) => {
           handleOnSearch(event, searchValue);
         }}
       >
         <input
-          className="search search-input"
+          className="search-input"
           onChange={handleOnChange}
           placeholder="Search Anime"
-         ></input>
+        ></input>
         <button
-          className="search btn"
+          className="search-btn"
           type="submit"
           form="search"
           onClick={(event) => {
