@@ -74,7 +74,7 @@ a {
 }
 .search-btn{
   position: absolute;
-  bottom: 50%;
+  bottom: 25%;
   right: 20px;
   width: 10%;
   background-color: rgb(219, 214, 214);

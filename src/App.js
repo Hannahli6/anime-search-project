@@ -1,11 +1,13 @@
 import { React, useEffect, useState } from "react";
 import SearchBar from "./SearchBar";
+import Navbar from "./Navbar";
+import Card from "./Card";
 
 function App() {
   // const url = "https://api.jikan.moe/v3https://api.jikan.moe/v3"
   const [animeName, setAnimeName] = useState("Fate/Zero");
   const [animes, setAnimes] = useState([]);
-  const [numOfAnimeToDisplay, setNumOfAnimeToDisplay] = useState(2);
+  const [numOfAnimeToDisplay, setNumOfAnimeToDisplay] = useState(8);
   const [pageNum, setPageNum] = useState(1);
   const url = `https://api.jikan.moe/v3/search/anime?q="${animeName}&page=1`;
   const [searchValue, setSearchValue] = useState("");
@@ -29,6 +31,7 @@ function App() {
     event.preventDefault();
     if (searchValue !== "") {
       setAnimeName(searchValue);
+      setPageNum(1);
     } else {
       return null;
     }
@@ -39,33 +42,24 @@ function App() {
   };
 
   const handleOnPageNumClick = (page) => {
-    console.log(page)
-    if(page === "next"){
-      setPageNum(pageNum + 1);
-      console.log(pageNum);
-    }
-    else if(page === "previous"){
+    const numOfGroups = Math.ceil(animes.length / numOfAnimeToDisplay);
+    console.log(numOfGroups);
+    if (page === "next")
+      if (numOfGroups <= pageNum) {
+        console.log("last page");
+        return null;
+      } else {
+        setPageNum(pageNum + 1);
+      }
+    else if (page === "previous" && pageNum !== 1) {
       setPageNum(pageNum - 1);
-      console.log(pageNum);
     }
   };
 
   return (
     <div className="App">
       <div className="landing-container">
-        <div className="navbar">
-          <div className="nav-links">
-            <a className="nav-link" href="https://www.google.ca/">
-              Home
-            </a>
-            <a className="nav-link" href="https://www.google.ca/">
-              Anime
-            </a>
-            <a className="nav-link" href="https://www.google.ca/">
-              Manga
-            </a>
-          </div>
-        </div>
+        <Navbar />
         <div className="landing-banner">
           <div className="landing-text-container">
             <h1>AniManga</h1>
@@ -82,28 +76,31 @@ function App() {
         <div className="animeList">
           {animes !== undefined && animes.length > 0 ? (
             animes
-            /* .slice(staring index, index+1) */
-            .slice(numOfAnimeToDisplay*(pageNum-1), numOfAnimeToDisplay*pageNum)
-            .map((anime, index) => {
-              const { image_url, title } = anime;
-              return (
-                <div className="anime" key={index}>
-                  <img src={image_url} className="animeImage" alt="anime"></img>
-                  <div className="anime-title-background">
-                    <p className="anime-title">{title}</p>
-                  </div>
-                </div>
-              );
-            })
+              .slice(
+                numOfAnimeToDisplay * (pageNum - 1),
+                numOfAnimeToDisplay * pageNum
+              )
+              .map((anime, index) => {
+                const { image_url, title } = anime;
+                return <Card key={index} image_url={image_url} title={title} />;
+              })
           ) : (
             <div>No Search Results for"{searchValue}"</div>
           )}
         </div>
         <div className="page-number-container">
-          <button className="page-number-btn" onClick={()=>handleOnPageNumClick(next)}>
+          <button
+            className="page-number-btn"
+            onClick={() => handleOnPageNumClick(previous)}
+          >
+            previous
+          </button>
+          <button
+            className="page-number-btn"
+            onClick={() => handleOnPageNumClick(next)}
+          >
             next
           </button>
-          <button className="page-number-btn" onClick={()=>handleOnPageNumClick(previous)}>previous</button>
         </div>
       </div>
     </div>
