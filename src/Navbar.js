@@ -14,6 +14,7 @@ const Navbar = () => {
               Manga
             </a>
           </div>
+
         </div>
     )
 }

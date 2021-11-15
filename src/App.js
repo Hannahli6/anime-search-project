@@ -1,60 +1,74 @@
-import { React, useEffect, useState } from "react";
-import SearchBar from "./SearchBar";
+import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
+import SearchBar from "./SearchBar";
+import SearchGenre from "./SearchGenre";
 import Card from "./Card";
 
 function App() {
-  // const url = "https://api.jikan.moe/v3https://api.jikan.moe/v3"
   const [animeName, setAnimeName] = useState("Fate/Zero");
   const [animes, setAnimes] = useState([]);
-  const [numOfAnimeToDisplay, setNumOfAnimeToDisplay] = useState(8);
   const [pageNum, setPageNum] = useState(1);
-  const url = `https://api.jikan.moe/v3/search/anime?q="${animeName}&page=1`;
-  const [searchValue, setSearchValue] = useState("");
-  let next = "next";
-  let previous = "previous";
+  const [genre, setGenre] = useState(null);
+  const [currentTypeOfAnime, setCurrentTypeOfAnime] = useState("popularAnime")
+  let numOfAnimeToDisplay = 49;
+
+  async function fetchData(typeOfAnime, pageNum) {
+
+    // const searchAnimeUrl = `https://api.jikan.moe/v3/search/anime?q="${animeName}&page="${pageNum}`;
+    const searchAnimeUrl = `https://api.jikan.moe/v3/search/anime?q=Fate/Zero&page=1`;
+    const popularAnimeUrl = `https://api.jikan.moe/v3/top/anime/${pageNum}/airing`;
+    let url = "";
+    let resultType = "";
+
+    if (typeOfAnime === "searchAnime") {
+      url = searchAnimeUrl;
+      resultType="results"
+    } else if (typeOfAnime === "popularAnime") {
+      url = popularAnimeUrl;
+      resultType="top"
+    }
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      const results = data[resultType];
+      console.log(results);
+      setAnimes(results || []);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // fetch data
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const results = data.results;
-        setAnimes(results);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, [animeName]);
+    fetchData(currentTypeOfAnime, pageNum);
+  }, []);
 
-  const handleOnSearch = (event) => {
-    event.preventDefault();
-    if (searchValue !== "") {
-      setAnimeName(searchValue);
-      setPageNum(1);
-    } else {
-      return null;
-    }
+  // search bar
+  const handleOnSearch = (text) => {
+    setAnimeName(text);
   };
 
-  const handleOnChange = (event) => {
-    setSearchValue(event.target.value);
+  const onAnimeClick = (url) => {
+    console.log("anime clicked");
+    console.log(url);
   };
 
-  const handleOnPageNumClick = (page) => {
-    const numOfGroups = Math.ceil(animes.length / numOfAnimeToDisplay);
-    console.log(numOfGroups);
-    if (page === "next")
-      if (numOfGroups <= pageNum) {
-        console.log("last page");
-        return null;
-      } else {
-        setPageNum(pageNum + 1);
-      }
-    else if (page === "previous" && pageNum !== 1) {
-      setPageNum(pageNum - 1);
-    }
+  const onGenreClick = (genreUrl, genre) => {
+    console.log(genreUrl);
+    console.log(genre);
+    setGenre(genre);
   };
+
+  const onPageClick = (page) => {
+    // if current page ex.3 is the same as the last page ex.3 , it will not make a call
+    if(pageNum!==page){
+      fetchData(currentTypeOfAnime, page);
+      setPageNum(page);
+    }
+    return null;
+  };
+
+
 
   return (
     <div className="App">
@@ -68,36 +82,49 @@ function App() {
         </div>
       </div>
       <div className="animeSearch">
-        <SearchBar
-          handleOnSearch={(event) => handleOnSearch(event)}
-          searchValue={searchValue}
-          handleOnChange={handleOnChange}
-        />
+        <SearchBar handleOnSearch={(event) => handleOnSearch(event)} />
+        <SearchGenre onGenreClick={onGenreClick} />
         <div className="animeList">
-          {animes !== undefined && animes.length > 0 ? (
-            animes
-              .slice(
-                numOfAnimeToDisplay * (pageNum - 1),
-                numOfAnimeToDisplay * pageNum
-              )
-              .map((anime, index) => {
-                const { image_url, title } = anime;
-                return <Card key={index} image_url={image_url} title={title} />;
-              })
+          {animes.length > 0 ? (
+            animes.slice(0, numOfAnimeToDisplay).map((anime, index) => {
+              const { image_url, title, url } = anime;
+              return (
+                <Card
+                  key={index}
+                  image_url={image_url}
+                  title={title}
+                  url={url}
+                  onAnimeClick={onAnimeClick}
+                />
+              );
+            })
           ) : (
-            <div>No Search Results for"{searchValue}"</div>
+            <div>No Search Results for "{animeName}"</div>
           )}
         </div>
+
+        {/* separate page number section into its own component */}
         <div className="page-number-container">
           <button
-            className="page-number-btn"
-            onClick={() => handleOnPageNumClick(previous)}
+            className="page-number-previous-btn"
+            onClick={() => onPageClick(pageNum !== 1 ? pageNum - 1 : 1)}
           >
             previous
           </button>
+          <div className="page-number-btns">
+            <button className="page-number-btn" onClick={() => onPageClick(1)}>
+              1
+            </button>
+            <button className="page-number-btn" onClick={() => onPageClick(2)}>
+              2
+            </button>
+            <button className="page-number-btn" onClick={() => onPageClick(3)}>
+              3
+            </button>
+          </div>
           <button
-            className="page-number-btn"
-            onClick={() => handleOnPageNumClick(next)}
+            className="page-number-next-btn"
+            onClick={() => onPageClick(pageNum !== 3 ? pageNum + 1 : pageNum)}
           >
             next
           </button>

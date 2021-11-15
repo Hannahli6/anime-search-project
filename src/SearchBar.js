@@ -1,27 +1,33 @@
-import { React } from "react";
+import React, { useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 
-const SearchBar = ({ handleOnSearch, searchValue, handleOnChange }) => {
+const SearchBar = ({ handleOnSearch }) => {
+  const [text, setText] = useState('')
+
+  const onSubmit = (event) => {
+    event.preventDefault()
+    if (text.trim() === "") return
+
+    handleOnSearch(text)
+  }
+
   return (
     <div className="search-container">
       <form
         className="search-bar"
-        onSubmit={(event) => {
-          handleOnSearch(event, searchValue);
-        }}
+        onSubmit={onSubmit}
       >
         <input
           className="search-input"
-          onChange={handleOnChange}
+          onChange={(event) => setText(event.target.value)}
           placeholder="Search Anime"
         ></input>
+        {text}
         <button
           className="search-btn"
           type="submit"
           form="search"
-          onClick={(event) => {
-            handleOnSearch(event, searchValue);
-          }}
+          onClick={onSubmit}
         >
           <AiOutlineSearch className="search-icon" />
         </button>
