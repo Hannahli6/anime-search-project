@@ -2,7 +2,7 @@ import { React } from "react";
 import GenreList from "./GenreList";
 
 const SearchGenre = ({onGenreClick}) => {
-  const genresToShow = ["Action", "Comedy", "Drama", "Mystery"];
+  const genresToShow = ["Action", "Comedy", "Drama", "Mystery", "Romance","School","Shoujo"];
   return (
     <div>
       <div>

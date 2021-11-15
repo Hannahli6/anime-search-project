@@ -8,37 +8,50 @@ function App() {
   const [animeName, setAnimeName] = useState("Fate/Zero");
   const [animes, setAnimes] = useState([]);
   const [pageNum, setPageNum] = useState(1);
-  const [genre, setGenre] = useState(null);
-  const [currentTypeOfAnime, setCurrentTypeOfAnime] = useState("popularAnime")
+  const [currentTypeOfAnime, setCurrentTypeOfAnime] = useState("popularAnime");
+  const [genreAnimeUrl, setGenreAnimeUrl] = useState("");
   let numOfAnimeToDisplay = 49;
 
-  async function fetchData(typeOfAnime, pageNum) {
-
-    // const searchAnimeUrl = `https://api.jikan.moe/v3/search/anime?q="${animeName}&page="${pageNum}`;
-    const searchAnimeUrl = `https://api.jikan.moe/v3/search/anime?q=Fate/Zero&page=1`;
+  async function fetchData(typeOfAnime, pageNum, genreUrl) {
+    const searchAnimeUrl = `https://api.jikan.moe/v3/search/anime?q="${animeName}&page="${pageNum}`;
+    // const searchAnimeUrl = `https://api.jikan.moe/v3/search/anime?q=Fate/Zero&page=1`;
     const popularAnimeUrl = `https://api.jikan.moe/v3/top/anime/${pageNum}/airing`;
     let url = "";
     let resultType = "";
 
+    // fetch differently based on different sorts of animes ex. genre/search/popular
     if (typeOfAnime === "searchAnime") {
       url = searchAnimeUrl;
-      resultType="results"
+      resultType = "results";
     } else if (typeOfAnime === "popularAnime") {
       url = popularAnimeUrl;
-      resultType="top"
+      resultType = "top";
+    } else if (typeOfAnime === "genre") {
+      if (!genreUrl) {
+        url = genreAnimeUrl + `/${pageNum}`;
+        resultType = "anime";
+      } else if (genreUrl) {
+        url = genreUrl + `/${pageNum}`;
+        setGenreAnimeUrl(genreUrl);
+        resultType = "anime";
+      }
     }
+
+    // fetch data
     try {
       const response = await fetch(url);
+      console.log(response);
       const data = await response.json();
       const results = data[resultType];
       console.log(results);
       setAnimes(results || []);
     } catch (error) {
+      console.log("error happened here!");
       console.log(error);
     }
   }
 
-  // fetch data
+  // initial fetch 
   useEffect(() => {
     fetchData(currentTypeOfAnime, pageNum);
   }, []);
@@ -53,22 +66,20 @@ function App() {
     console.log(url);
   };
 
-  const onGenreClick = (genreUrl, genre) => {
-    console.log(genreUrl);
-    console.log(genre);
-    setGenre(genre);
+  const onGenreClick = (genreUrl) => {
+    setPageNum(1);
+    setCurrentTypeOfAnime("genre");
+    fetchData("genre", pageNum, genreUrl);
   };
 
   const onPageClick = (page) => {
     // if current page ex.3 is the same as the last page ex.3 , it will not make a call
-    if(pageNum!==page){
+    if (pageNum !== page) {
       fetchData(currentTypeOfAnime, page);
       setPageNum(page);
     }
     return null;
   };
-
-
 
   return (
     <div className="App">
