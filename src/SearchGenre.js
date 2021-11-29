@@ -1,8 +1,17 @@
 import { React } from "react";
 import GenreList from "./GenreList";
+import Button from "@mui/material/Button";
 
-const SearchGenre = ({onGenreClick}) => {
-  const genresToShow = ["Action", "Comedy", "Drama", "Mystery", "Romance","School","Shoujo"];
+const SearchGenre = ({ onGenreClick }) => {
+  const genresToShow = [
+    "Action",
+    "Comedy",
+    "Drama",
+    "Mystery",
+    "Romance",
+    "School",
+    "Shoujo",
+  ];
   return (
     <div>
       <div>
@@ -10,11 +19,18 @@ const SearchGenre = ({onGenreClick}) => {
         <hr></hr>
         <div>
           {genresToShow.map((genre, index) => {
-            const genreUrl = "https://api.jikan.moe/v3/genre/anime/" + GenreList[genre];
+            const genreId = GenreList[genre];
             return (
-              <button key={index} onClick={()=>{onGenreClick(genreUrl, genre)}}>
+              <Button
+                variant="outlined"
+                size="medium"
+                key={index}
+                onClick={() => {
+                  onGenreClick(genreId, genre);
+                }}
+              >
                 {genre}
-              </button>
+              </Button>
             );
           })}
         </div>

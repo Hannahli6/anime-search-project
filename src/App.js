@@ -3,62 +3,40 @@ import Navbar from "./Navbar";
 import SearchBar from "./SearchBar";
 import SearchGenre from "./SearchGenre";
 import Card from "./Card";
+import Button from "@mui/material/Button";
+import Pagination from "@mui/material/Pagination";
+import {
+  fetchAnimeByPopularity,
+  fetchAnimeByName,
+  fetchAnimebyGenre,
+} from "./getData";
 
+const SEARCH_TYPES = {
+  popularity: "popularity",
+  name: "name",
+  genre: "genre",
+};
 function App() {
+  const [searchType, setSearchType] = useState(SEARCH_TYPES.popularity);
   const [animeName, setAnimeName] = useState("Fate/Zero");
   const [animes, setAnimes] = useState([]);
+  const [genreId, setGenreId] = useState(null);
   const [pageNum, setPageNum] = useState(1);
-  const [currentTypeOfAnime, setCurrentTypeOfAnime] = useState("popularAnime");
-  const [genreAnimeUrl, setGenreAnimeUrl] = useState("");
   let numOfAnimeToDisplay = 49;
 
-  async function fetchData(typeOfAnime, pageNum, genreUrl) {
-    const searchAnimeUrl = `https://api.jikan.moe/v3/search/anime?q="${animeName}&page="${pageNum}`;
-    // const searchAnimeUrl = `https://api.jikan.moe/v3/search/anime?q=Fate/Zero&page=1`;
-    const popularAnimeUrl = `https://api.jikan.moe/v3/top/anime/${pageNum}/airing`;
-    let url = "";
-    let resultType = "";
-
-    // fetch differently based on different sorts of animes ex. genre/search/popular
-    if (typeOfAnime === "searchAnime") {
-      url = searchAnimeUrl;
-      resultType = "results";
-    } else if (typeOfAnime === "popularAnime") {
-      url = popularAnimeUrl;
-      resultType = "top";
-    } else if (typeOfAnime === "genre") {
-      if (!genreUrl) {
-        url = genreAnimeUrl + `/${pageNum}`;
-        resultType = "anime";
-      } else if (genreUrl) {
-        url = genreUrl + `/${pageNum}`;
-        setGenreAnimeUrl(genreUrl);
-        resultType = "anime";
-      }
-    }
-
-    // fetch data
-    try {
-      const response = await fetch(url);
-      console.log(response);
-      const data = await response.json();
-      const results = data[resultType];
-      console.log(results);
-      setAnimes(results || []);
-    } catch (error) {
-      console.log("error happened here!");
-      console.log(error);
-    }
-  }
-
-  // initial fetch 
+  // initial fetch
   useEffect(() => {
-    fetchData(currentTypeOfAnime, pageNum);
+    const initialFetch = async () =>
+      setAnimes(await fetchAnimeByPopularity(pageNum));
+    initialFetch();
   }, []);
 
   // search bar
-  const handleOnSearch = (text) => {
+  const handleOnSearch = async (text) => {
+    setPageNum(1);
     setAnimeName(text);
+    setAnimes(await fetchAnimeByName(text, pageNum));
+    setSearchType(SEARCH_TYPES.genre);
   };
 
   const onAnimeClick = (url) => {
@@ -66,19 +44,31 @@ function App() {
     console.log(url);
   };
 
-  const onGenreClick = (genreUrl) => {
+  const onGenreClick = async (genreId) => {
     setPageNum(1);
-    setCurrentTypeOfAnime("genre");
-    fetchData("genre", pageNum, genreUrl);
+    setGenreId(genreId);
+    setAnimes(await fetchAnimebyGenre(genreId, pageNum));
+    setSearchType(SEARCH_TYPES.genre);
   };
 
-  const onPageClick = (page) => {
-    // if current page ex.3 is the same as the last page ex.3 , it will not make a call
-    if (pageNum !== page) {
-      fetchData(currentTypeOfAnime, page);
-      setPageNum(page);
+  const onPageClick = async (page) => {
+    if (pageNum === page) {
+      return null;
     }
-    return null;
+    let animes = [];
+    switch (searchType) {
+      case SEARCH_TYPES.popularity:
+        animes = await fetchAnimeByPopularity(page);
+        break;
+      case SEARCH_TYPES.name:
+        animes = await fetchAnimeByName(animeName, page);
+        break;
+      case SEARCH_TYPES.genre:
+        animes = await fetchAnimebyGenre(genreId, page);
+        break;
+    }
+    setAnimes(animes);
+    setPageNum(page);
   };
 
   return (
@@ -89,11 +79,12 @@ function App() {
           <div className="landing-text-container">
             <h1>AniManga</h1>
             <h4>Find your favorite Anime & Manga now!</h4>
+            <Button variant="outlined">Outlined</Button>
           </div>
         </div>
       </div>
       <div className="animeSearch">
-        <SearchBar handleOnSearch={(event) => handleOnSearch(event)} />
+        <SearchBar handleOnSearch={(text) => handleOnSearch(text)} />
         <SearchGenre onGenreClick={onGenreClick} />
         <div className="animeList">
           {animes.length > 0 ? (
@@ -114,31 +105,11 @@ function App() {
           )}
         </div>
 
-        {/* separate page number section into its own component */}
-        <div className="page-number-container">
-          <button
-            className="page-number-previous-btn"
-            onClick={() => onPageClick(pageNum !== 1 ? pageNum - 1 : 1)}
-          >
-            previous
-          </button>
-          <div className="page-number-btns">
-            <button className="page-number-btn" onClick={() => onPageClick(1)}>
-              1
-            </button>
-            <button className="page-number-btn" onClick={() => onPageClick(2)}>
-              2
-            </button>
-            <button className="page-number-btn" onClick={() => onPageClick(3)}>
-              3
-            </button>
-          </div>
-          <button
-            className="page-number-next-btn"
-            onClick={() => onPageClick(pageNum !== 3 ? pageNum + 1 : pageNum)}
-          >
-            next
-          </button>
+        <div className="page-number-container" >
+          <Pagination count={5} 
+          page={pageNum} 
+          color	= {'primary'}
+          onChange={(event, value)=>{ onPageClick(value)}} />
         </div>
       </div>
     </div>
